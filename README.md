@@ -1,14 +1,14 @@
-###What is MailBomb Boom Go ?###
+## What is MailBomb Boom Go ?
 MailBomb Boom Go is a Java client that offer the possibility to play a "Prank Campaign" by sending forged emails to a list of victims defined by the user.
 
 You can create a group of "victims" you want to prank and create predefined "prank texts" you want to send to them.
 
-###How it works ?###
+## How it works ?
 MailBomb Boom Go use the SMTP protocol to send emails by using a victim email address to a group of receiver victims. It send a "forged" mail. It means that the sender of the message will be the real email address of the person and the receiver will really believe that it is the real sender.
 
 You only have to create two files, a "victims" file and a "pranks" file, start the program by giving the files, the SMTP server address and enjoy !
 
-###How can we "steal" the sender email address ?###
+## How can we "steal" the sender email address ?
 The SMTP protocol works like this:
 1. `Client: EHLO`: the client send a message to the server to indicate that he want to send a message.
 2. `Server: 250 INFOS`: the server gives different informations about the data size.
