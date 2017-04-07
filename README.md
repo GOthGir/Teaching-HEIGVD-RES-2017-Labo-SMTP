@@ -37,7 +37,7 @@ We see that the last line is the only one that contain a space separator after t
 
 It is important to understand how the server interprets an end of line sent by the client. The SMTP take the `\n\r` end of line separator.
 
-###How to use MailBomb Boom Go ?
+### How to use MailBomb Boom Go ?
 First, you have to download the executable JAR file. Then you have to create the victims and pranks files by following these formats :
 
 **The victims file must be like this :**
