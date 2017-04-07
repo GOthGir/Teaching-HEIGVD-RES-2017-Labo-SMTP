@@ -71,4 +71,3 @@ You have to place the two files named `victims.lol` and `pranks.lol` in the same
 - `-pranks "<pathToFile>"`: the path to your pranks file.
 - `-host <serverAddress>`: the SMTP server host you want to use. (default : localhost)
 - `-port <portNumber>`: the port used in the SMTP server host (default : 25).
-
