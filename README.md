@@ -1,65 +1,74 @@
-# Teaching-HEIGVD-RES-2017-Labo-SMTP
+###What is MailBomb Boom Go ?
+MailBomb Boom Go is a Java client that offer the possibility to play a "Prank Campaign" by sending forged emails to a list of victims defined by the user.
 
-## Objectives
+You can create a group of "victims" you want to prank and create predefined "prank texts" you want to send to them.
 
-In this lab, you will develop a client application (TCP) in Java. This client application will use the Socket API to communicate with a SMTP server. The code that you write will include a **partial implementation of the SMTP protocol**. These are the objectives of the lab:
+###How it works ?
+MailBomb Boom Go use the SMTP protocol to send emails by using a victim email address to a group of receiver victims. It send a "forged" mail. It means that the sender of the message will be the real email address of the person and the receiver will really believe that it is the real sender.
 
-* Make practical experiments to become familiar with the **SMTP protocol**. After the lab, you should be able to use a command line tool to **communicate with a SMTP server**. You should be able to send well-formed messages to the server, in order to send emails to the address of your choice.
+You only have to create two files, a "victims" file and a "pranks" file, start the program by giving the files, the SMTP server address and enjoy !
 
-* Understand the notions of **test double** and **mock server**, which are useful when developing and testing a client-server application. During the lab, you will setup and use such a **mock server**.
+###How can we "steal" the sender email address ?
+The SMTP protocol works like this:
+1. `Client: EHLO`: the client send a message to the server to indicate that he want to send a message.
+2. `Server: 250 INFOS`: the server gives different informations about the data size.
+3. `Client: MAIL FROM <sender@xxxx.xxxx>`: the client indicate the sender email address.
+4. `Server: 250 Sender ok`: the server accepts the sender.
+5. `Client: RCPT TO: <receiver@yyyy.yyyy>`: the client send the receiver email address.
+6. `Server: 250 Recipient ok.`: the server accepts the receiver.
+7. `Client: DATA`: the client start to send the mail content.
+8. `Server: 354 Enter mail, end with "." on a line by itself`: the server indicates how to send the data.
+9. `Client: Subject: Test`: the mail subject.
+10. `Client: Message Text`: the mail content.
+11. `Client: .`: an unique point indicate the end of data of the mail content.
+12. `Server: 250 Ok`: accepts the mail content.
+13. `Client: QUIT`: the client finish the communication.
+14. `Server: 221 Closing connection`: the server close the connection.
+When you have understood how the SMTP communication works, it is very simple to write a program that send the correct commands and the data you want. The interesting point is the 3rd where you specifies the mail sender. You can indicate any sender you want !
 
-* Understand what it means to **implement the SMTP protocol** and be able to send e-mail messages, by working directly on top of the Socket API (i.e. you are not allowed to use a SMTP library).
+Another specification of the SMTP protocol important to understand is how we know when the server have finished to send responses to the client. If we take a multiple line response example :
+```
+250-smtp.xxxx.xxxx
+250-PIPELINING
+250 8BITMIME
+```
+We see that the last line is the only one that contain a space separator after the response code. It's the only way we found to know if the server finished to send his responses.
 
-* **See how easy it is to send forged e-mails**, which appear to be sent by certain people but in reality are issued by malicious users.
+It is important to understand how the server interprets an end of line sent by the client. The SMTP take the `\n\r` end of line separator.
 
-* **Design a simple object-oriented model** to implement the functional requirements described in the next paragraph.
+###How to use MailBomb Boom Go ?
+First, you have to download the executable JAR file. Then you have to create the victims and pranks files by following these formats :
 
+**The victims file must be like this :**
+```
+{"senders":["salut1@yoyo.com","salut2@yoyo.com","salut3@yoyo.com","salut4@yoyo.com"],"receivers":["ayeaye1@yoyo.com","ayeaye2@yoyo.com","ayeaye3@yoyo.com","ayeaye4@yoyo.com"]}!$&#%#&$!
+{"senders":["blabla@yoyo.com"],"receivers":["gruetzy@yoyo.com","salut@yoyo.com"]}!$&#%#&$!
+```
+If you know what it means, the victims file simply contains JSON objects. A senders/receivers group is surrounded by braces `{}` and contains `"senders":arrayOfSenders,"receivers":arrayOfReceivers"`. The senders array must have this form `["sender1","sender2",...]` and the receivers must have the same form `["receiver1","receiver2",...]`. If you want to create several senders/receivers groups, you have to separate the groups with the specified separator `!$&#%#&$!`.
 
+**The pranks file must be like this:**
+```
+C'est deux spermatozoïdes qui discutent :
+- Dis, c'est encore loin les ovaires ?
+- Tu parles, on n'est qu'aux amydales.
+!$&#%#&$!
+- Dis maman, un citron, ça a des pattes ?
+- ???
+- Dis maman, un citron, ça a des pattes ?
+- Euh... ben non, un citron ça n'a pas de pattes.
+- Ah ben c'est un poussin que j'ai pressé, alors.
+!$&#%#&$!
+```
+The file simply contains the prank texts separated with the `!$&#%#&$!` separator.
 
+When you have created your two files you have two options to run the program :
 
-## Functional requirements
+**Simple use:**
+You have to place the two files named `victims.lol` and `pranks.lol` in the same directory as the program and simply run the JAR executable.
 
-Your mission is to develop a client application that automatically plays pranks on a list of victims:
-
-* The user should be able to **define a list of victims** (concretely, you should be able to create a file containing a list of e-mail addresses).
-
-* The user should be able to **define how many groups of victims should be formed** in a given campaign. In every group of victims, there should be 1 sender and at least 2 recipients (i.e. the minimum size for a group is 3).
-
-* The user should be able to **define a list of e-mail messages**. When a prank is played on a group of victims, then one of these messages should be selected. **The mail should be sent to all group recipients, from the address of the group sender**. In other words, the recipient victims should be lead to believe that the sender victim has sent them.
-
-
-## Example
-
-Consider that your program generates a group G1. The group sender is Bob. The group recipients are Alice, Claire and Peter. When the prank is played on group G1, then your program should pick one of the fake messages. It should communicate with a SMTP server, so that Alice, Claire and Peter receive an e-mail, which appears to be sent by Bob.
-
-
-## Deliverables
-
-You will deliver the results of your lab in a GitHub repository. 
-
-Your repository should contain both the source code of your Java project and your report. Your report should be a single `README.md` file, located at the root of your repository. The images should be placed in a `figures` directory.
-
-Your report MUST include the following sections:
-
-* **A brief description of your project**: if people exploring GitHub find your repo, without a prior knowledge of the RES course, they should be able to understand what your repo is all about and whether they should look at it more closely.
-
-* **Clear and simple instructions for configuring your tool and running a prank campaign**. If you do a good job, an external user should be able to clone your repo, edit a couple of files and send a batch of e-mails in less than 10 minutes.
-
-In addition, your report SHOULD include (i.e. you will not have penalties if you don't provide the info, but if you want to add this project to your portfolio, it is worth doing it):
-
-* **A concise description of your implementation**: document the key aspects of your code. It is probably a good idea to start with a class diagram. Decide which classes you want to show (focus on the important ones) and describe their responsibilities in text. It is also certainly a good idea to include examples of dialogues between your client and a SMTP server (maybe you also want to include some screenshots here).
-
-* **Instructions for installing and using a mock SMTP server**. The user who wants to experiment with your tool but does not really want to send pranks immediately should be able to use a mock SMTP server. For people who are not familiar with this concept, explain it to them in simple terms. Explain which mock server you have used and how you have set it up.
-
-      
-## Evaluation
-
-* See CyberLearn.
-
-
-
-
-
-
-
-
+**Advanced use:**
+You can run the program from the bash and give specific options :
+- `-victims "<pathToFile>"`: the path to your victims file.
+- `-pranks "<pathToFile>"`: the path to your pranks file.
+- `-host <serverAddress>`: the SMTP server host you want to use.
+- `-port <portNumber>`: the port used in the SMTP server host (basically 25).
