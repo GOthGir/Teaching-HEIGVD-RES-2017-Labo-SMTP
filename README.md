@@ -24,6 +24,7 @@ The SMTP protocol works like this:
 12. `Server: 250 Ok`: accepts the mail content.
 13. `Client: QUIT`: the client finish the communication.
 14. `Server: 221 Closing connection`: the server close the connection.
+
 When you have understood how the SMTP communication works, it is very simple to write a program that send the correct commands and the data you want. The interesting point is the 3rd where you specifies the mail sender. You can indicate any sender you want !
 
 Another specification of the SMTP protocol important to understand is how we know when the server have finished to send responses to the client. If we take a multiple line response example :
@@ -64,6 +65,7 @@ The file simply contains the prank texts separated with the `!$&#%#&$!` separato
 When you have created your two files you have two options to run the program :
 
 **Basic usage:**
+
 You have to place the two files named `victims.lol` and `pranks.lol` in the same directory as the program and simply run the JAR executable. It will try to connect to a smtp server hosted locally (localhost) listening on port 2525.
 
 **Advanced usage:**
